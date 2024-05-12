@@ -8,14 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
+    init() {
+        self.engine = Engine()
+    }
+    
+    private let engine: Engine
+        
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        let columns: [GridItem] = Array(repeating: .init(.fixed(40), spacing: 0), count: 8)
+        
+        LazyVGrid(columns: columns, spacing: 0) {
+            ForEach(0 ..< 64) { i in
+                Square(indexFromTopLeft: i, engine: engine)
+            }
         }
-        .padding()
     }
 }
 
