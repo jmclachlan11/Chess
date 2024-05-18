@@ -7,48 +7,34 @@
 
 import Foundation
 
-struct Piece {
-    enum Name { case king, queen, rook, bishop, knight, pawn }
-    enum Color { case black, white }
+class Piece: BoardMember, ObservableObject {
+    var square: Square?
+    let board: Board
+    let isBlack: Bool
+    let spriteSheetRow: Double
     
-    static let empty = Piece()
-    
-    private init() {
-        self.isOccupied = false
-        self.name = .king
-        self.color = .white
+    init() {
+        self.isBlack = false
+        self.board = Board()
+        self.square = nil
+        self.spriteSheetRow = 0
     }
     
-    init(color: Piece.Color, name: Piece.Name) {
-        self.isOccupied = true
-        self.name = name
-        self.color = color
+    init(on board: Board, at location: Location, isBlack: Bool) {
+        self.isBlack = isBlack
+        self.board = board
+        self.square = board.square(at: location)
+        self.spriteSheetRow = isBlack ? 1 : 0
     }
     
-    let isOccupied: Bool
-    let name: Piece.Name
-    let color: Piece.Color
-    
-    func spriteSheetRow() -> Double {
-        return self.color == .white ? 0 : 1
+    func isFriendOf(_ m: any Movable) -> Bool {
+        return self.isBlack == m.isBlack
     }
     
-    func spriteSheetColumn() -> Double {
-        switch name {
-        case .king:
-            return 0
-        case .queen:
-            return 1
-        case .rook:
-            return 4
-        case .bishop:
-            return 2
-        case .knight:
-            return 3
-        case .pawn:
-            return 5
-        }
-   
+    func move(to l: Location) {
+        board.report(from: self.square!.location, to: l)
+        self.square = board.square(at: l)
     }
 }
+
 
